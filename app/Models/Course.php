@@ -8,8 +8,7 @@ class Course extends Model
 {
     protected $table="courses";
 
-    public function lesson()
-    {
-        $this->hasMany('App\Models\Lesson','course_id', 'id');
+    public function profession(){
+        return $this->belongsTo(Profession::class,'profession_id', 'id');
     }
 }

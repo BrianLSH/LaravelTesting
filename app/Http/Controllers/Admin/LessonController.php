@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Course;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
 
@@ -15,17 +16,54 @@ class LessonController extends Controller
      */
     public function index()
     {
-        //$data = Lesson::with('course')->get();
-       //$data = Lesson::all()->course;
-       //$data = Lesson::with('course')->find(1);
-       //$data = Lesson::with('course')->get();
-       //$data = Lesson::with(['course'=>function($q){
-        //       //     $q->where('id','=',1);
-        //       //}])->find(1);
+        $data = Lesson::with(['course.profession'])->get();
 
-        $data = Lesson::leftjoin('courses', 'lessons.course_id', '=', 'courses.id')->get();
+        return ['data'=>$data];
+    }
 
-        return ['$data'=>$data];
+    public function search(Request $request)
+    {
+        $title = $request->all();
+        $datamin = '2020-01-07 13:36:44';
+//        $datamax = '2020-01-07 14:36:44';
+        $datamax = '';
+        $name = $title['name'];
+
+//        $data = Lesson::where("lesson_name", "like", "%$name%")
+//            ->where(function($q) use($datamin, $datamax){
+//                if ($datamin != '') {
+//                    $q->where('created_at', '>=', $datamin);
+//                }
+//
+//                if ($datamax != '') {
+//                    $q->where('updated_at', '<=', $datamax);
+//                }
+//            })
+//            ->with('course.profession')
+//            ->get();
+
+        $data = Lesson::where('lesson_name', 'like', "%$name%")
+            ->where(function($q) use($datamin, $datamax){
+                
+                    if ($datamin != ''){
+                        $q->where('created_at', '>=', $datamin);
+                    }
+
+                    if ($datamax != '') {
+                        $q->where('updated_at', '<=', $datamax);
+                    }
+            })
+            ->with(['course'=>function($q){
+                $q->with('profession');
+            }])
+            ->get();
+
+       return ['data'=>$data];
+
+
+
+
+
     }
 
     /**

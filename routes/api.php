@@ -20,5 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['prefix'=>'admin','namespace'=>'Admin'], function(){
 
     Route::resource('lessons', 'LessonController');
+    Route::post('lesson/search', 'LessonController@search');
 });
 
